@@ -92,7 +92,8 @@ class CPU:
             if self.binary_ops[ir] == 'LDI':
                 #get the register number ramRead(pc + 1)
                 register_num = int(self.ram_read(self.pc + 1))
-                # #get the value self.reg[] = ramRed(pc + 2)
+                
+                #get the value self.reg[] = ramRed(pc + 2)
                 value = int(self.ram_read(self.pc + 2))
                 self.registers[register_num] = value
                 
