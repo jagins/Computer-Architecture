@@ -19,14 +19,13 @@ class CPU:
             0b01000111: 'PRN',
             0b00000001: 'HLT'
         }
-        pass
     
     #add ram_read(address)
         #return the value stored in the address
     def ram_read(self, address):
         return self.ram[address]
+    
     #add ram_write(address, value)
-        #put the value in the address to the ram
     def ram_write(self, address, value):
         self.ram[address] = value
         
@@ -101,8 +100,6 @@ class CPU:
                 self.pc += 3
             
             #else if check if the instruction is print
-                #get the register number = self.ram[pc + 1]
-                #print self.reg[]
             elif self.binary_ops[ir] == 'PRN':
                 register_num = self.ram_read(self.pc + 1)
                 print(self.registers[register_num])
