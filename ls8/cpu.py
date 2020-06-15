@@ -111,4 +111,3 @@ class CPU:
             elif self.binary_ops[ir] == 'HLT':
                 running = False
                 self.pc += 1
-                sys.exit(1)
