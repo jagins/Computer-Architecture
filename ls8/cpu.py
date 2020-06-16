@@ -15,9 +15,10 @@ class CPU:
         self.pc = 0
         #make a binary operations table
         self.binary_ops = {
-            0b10000010:  self.LDI,
-            0b01000111:  self.PRN,
-            0b00000001:  self.HLT
+            0b10000010: self.LDI,
+            0b01000111: self.PRN,
+            0b00000001: self.HLT,
+            0b10100010: self.MUL
         }
         self.running = False
     
@@ -93,6 +94,14 @@ class CPU:
     def HLT(self):
         self.running = False
         self.pc += 1
+    
+    def MUL(self):
+        register1_num = int(self.ram_read(self.pc + 1))
+        register2_num = int(self.ram_read(self.pc + 2))
+        self.registers[register1_num] = self.registers[register1_num] * self.registers[register2_num]
+        
+        self.pc += 3
+        
     
     def run(self):
         """Run the CPU."""
