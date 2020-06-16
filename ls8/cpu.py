@@ -32,26 +32,24 @@ class CPU:
         
     def load(self):
         """Load a program into memory."""
-
-        address = 0
-
-        # For now, we've just hardcoded a program:
-
-        program = [
-            # From print8.ls8
-            0b10000010, # LDI R0,8, operation type
-            0b00000000, #register number
-            0b00001000, #value to store in the register
-            0b01000111, # PRN R0 print operation type
-            0b00000000, #print whatever value is in register 0
-            0b00000001, # HLT exit operation tpe and exit the emulator
-        ]
-
-        for instruction in program:
-            self.ram[address] = instruction
-            address += 1
+        filename = sys.argv[1]
 
 
+        with open(filename) as f:
+            address = 0
+            for line in f:
+                line = line.split('#')
+                instruction = line[0].strip()
+        
+                try:
+                    if instruction == '' or instruction == '\n':
+                        continue
+                    v = int(instruction, 2)
+                except ValueError:
+                    continue
+                self.ram[address] = v
+                address += 1
+    
     def alu(self, op, reg_a, reg_b):
         """ALU operations."""
 
@@ -104,5 +102,4 @@ class CPU:
         while self.running:
             #get the instruction from ram
             ir = self.ram_read(self.pc)
-            
             self.binary_ops[ir]()
