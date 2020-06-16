@@ -34,7 +34,6 @@ class CPU:
         """Load a program into memory."""
         filename = sys.argv[1]
 
-
         with open(filename) as f:
             address = 0
             for line in f:
