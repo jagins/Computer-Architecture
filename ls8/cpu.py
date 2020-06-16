@@ -15,10 +15,11 @@ class CPU:
         self.pc = 0
         #make a binary operations table
         self.binary_ops = {
-            0b10000010: 'LDI',
-            0b01000111: 'PRN',
-            0b00000001: 'HLT'
+            0b10000010:  self.LDI,
+            0b01000111:  self.PRN,
+            0b00000001:  self.HLT
         }
+        self.running = False
     
     #add ram_read(address)
         #return the value stored in the address
@@ -80,32 +81,28 @@ class CPU:
 
         print()
 
+    def LDI(self):
+        register_num = int(self.ram_read(self.pc + 1))
+        value = int(self.ram_read(self.pc + 2))
+        self.registers[register_num] = value
+        
+        self.pc += 3
+    
+    def PRN(self):
+        register_num = self.ram_read(self.pc + 1)
+        print(self.registers[register_num])
+        self.pc += 2
+    
+    def HLT(self):
+        self.running = False
+        self.pc += 1
+    
     def run(self):
         """Run the CPU."""
-        running = True
+        self.running = True
         #loop while true
-        while running:
+        while self.running:
             #get the instruction from ram
             ir = self.ram_read(self.pc)
             
-            #check if the instruction is LDI
-            if self.binary_ops[ir] == 'LDI':
-                #get the register number ramRead(pc + 1)
-                register_num = int(self.ram_read(self.pc + 1))
-                
-                #get the value self.reg[] = ramRed(pc + 2)
-                value = int(self.ram_read(self.pc + 2))
-                self.registers[register_num] = value
-                
-                #move to next instruction pc += 3
-                self.pc += 3
-            
-            #else if check if the instruction is print
-            elif self.binary_ops[ir] == 'PRN':
-                register_num = self.ram_read(self.pc + 1)
-                print(self.registers[register_num])
-                self.pc += 2
-            
-            elif self.binary_ops[ir] == 'HLT':
-                running = False
-                self.pc += 1
+            self.binary_ops[ir]()
