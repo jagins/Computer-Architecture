@@ -24,7 +24,7 @@ class CPU:
         }
         self.running = False
         self.stack_pointer = 7
-        self.registers[self.stack_pointer] = int('0xf4', 16)
+        self.registers[self.stack_pointer] = int('0xf4', 16) #reg[7] = 244
     
     #add ram_read(address)
         #return the value stored in the address
@@ -118,7 +118,7 @@ class CPU:
     
     def POP(self):
         register_num = int(self.ram_read(self.pc + 1))
-        popped = self.registers[register_num]
+        popped = self.ram_read(self.registers[self.stack_pointer])
         self.registers[register_num] = popped
         self.registers[self.stack_pointer] += 1
         
