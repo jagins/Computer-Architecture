@@ -18,9 +18,13 @@ class CPU:
             0b10000010: self.LDI,
             0b01000111: self.PRN,
             0b00000001: self.HLT,
-            0b10100010: self.MUL
+            0b10100010: self.MUL,
+            0b01000101: self.PUSH,
+            0b01000110: self.POP
         }
         self.running = False
+        self.stack_pointer = 7
+        self.registers[self.stack_pointer] = int('0xf4', 16)
     
     #add ram_read(address)
         #return the value stored in the address
@@ -101,7 +105,24 @@ class CPU:
         self.registers[register1_num] = self.registers[register1_num] * self.registers[register2_num]
         
         self.pc += 3
+    
+    def PUSH(self):
+        self.registers[self.stack_pointer] -= 1
+        register_num = int(self.ram_read(self.pc + 1))
+        value = self.registers[register_num]
         
+        stack_top_address = self.registers[self.stack_pointer]
+        self.ram_write(stack_top_address, value)
+        
+        self.pc += 2
+    
+    def POP(self):
+        register_num = int(self.ram_read(self.pc + 1))
+        popped = self.registers[register_num]
+        self.registers[register_num] = popped
+        self.registers[self.stack_pointer] += 1
+        
+        self.pc += 2
     
     def run(self):
         """Run the CPU."""
