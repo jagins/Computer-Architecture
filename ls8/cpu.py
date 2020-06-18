@@ -20,7 +20,10 @@ class CPU:
             0b00000001: self.HLT,
             0b10100010: self.MUL,
             0b01000101: self.PUSH,
-            0b01000110: self.POP
+            0b01000110: self.POP,
+            0b01010000: self.CALL,
+            0b00010001: self.RET,
+            0b10100000: self.ADD
         }
         self.running = False
         self.stack_pointer = 7
@@ -58,7 +61,7 @@ class CPU:
         """ALU operations."""
 
         if op == "ADD":
-            self.reg[reg_a] += self.reg[reg_b]
+            self.registers[reg_a] += self.registers[reg_b]
         #elif op == "SUB": etc
         else:
             raise Exception("Unsupported ALU operation")
@@ -124,6 +127,27 @@ class CPU:
         
         self.pc += 2
     
+    def CALL(self):
+        return_address = self.pc + 2
+        self.registers[self.stack_pointer] -= 1
+        self.ram_write(self.registers[self.stack_pointer], return_address)
+        
+        register_num = self.ram_read(self.pc + 1)
+        sub_address = self.registers[register_num]
+        
+        self.pc = sub_address
+        
+    def RET(self):
+        sub_address = self.ram_read(self.registers[self.stack_pointer])
+        self.registers[self.stack_pointer] += 1
+        self.pc = sub_address
+        
+    def ADD(self):
+        reg1 = self.ram_read(self.pc + 1)
+        reg2 = self.ram_read(self.pc + 2)
+        
+        self.alu('ADD', reg1, reg2)
+        self.pc += 3    
     def run(self):
         """Run the CPU."""
         self.running = True
