@@ -63,6 +63,8 @@ class CPU:
         if op == "ADD":
             self.registers[reg_a] += self.registers[reg_b]
         #elif op == "SUB": etc
+        elif op == 'MUL':
+            self.registers[reg_a] *= self.registers[reg_b]
         else:
             raise Exception("Unsupported ALU operation")
 
@@ -105,8 +107,8 @@ class CPU:
     def MUL(self):
         register1_num = int(self.ram_read(self.pc + 1))
         register2_num = int(self.ram_read(self.pc + 2))
-        self.registers[register1_num] = self.registers[register1_num] * self.registers[register2_num]
         
+        self.alu('MUL', register1_num, register2_num)
         self.pc += 3
     
     def PUSH(self):
@@ -148,6 +150,7 @@ class CPU:
         
         self.alu('ADD', reg1, reg2)
         self.pc += 3    
+    
     def run(self):
         """Run the CPU."""
         self.running = True
