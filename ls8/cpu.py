@@ -23,11 +23,20 @@ class CPU:
             0b01000110: self.POP,
             0b01010000: self.CALL,
             0b00010001: self.RET,
-            0b10100000: self.ADD
+            0b10100000: self.ADD,
+            0b10100111: self.CMP,
+            0b01010101: self.JEQ,
+            0b01010110: self.JNE,
+            0b01010100: self.JMP
         }
         self.running = False
         self.stack_pointer = 7
         self.registers[self.stack_pointer] = int('0xf4', 16) #reg[7] = 244
+        self.flags = {
+            'E': 0,
+            'L': 0,
+            'G': 0
+        }
     
     #add ram_read(address)
         #return the value stored in the address
@@ -65,6 +74,15 @@ class CPU:
         #elif op == "SUB": etc
         elif op == 'MUL':
             self.registers[reg_a] *= self.registers[reg_b]
+        elif op == 'CMP':
+            if self.registers[reg_a] == self.registers[reg_b]:
+                self.flags['E'] = 1
+                
+            elif self.registers[reg_a] < self.registers[reg_b]:
+                self.flags['L'] = 1
+                
+            elif self.registers[reg_a] > self.registers[reg_b]:
+                self.flags['G'] = 1
         else:
             raise Exception("Unsupported ALU operation")
 
@@ -150,7 +168,33 @@ class CPU:
         
         self.alu('ADD', reg1, reg2)
         self.pc += 3    
+        
+    def CMP(self):
+        reg1 = self.ram_read(self.pc + 1)
+        reg2 = self.ram_read(self.pc + 2)
+        
+        self.alu('CMP', reg1, reg2)
+        self.pc += 3
     
+    def JEQ(self):
+        
+        if self.flags['E'] == 1:
+            self.JMP()
+        else:
+            self.pc += 2 
+            
+    def JNE(self):
+        jump_to_register = self.ram_read(self.pc + 1)
+        
+        if self.flags['E'] == 0:
+            self.JMP()
+        else:
+            self.pc += 2
+            
+    def JMP(self):
+        jump_to_register = self.ram_read(self.pc + 1)
+        self.pc = self.registers[jump_to_register]
+                
     def run(self):
         """Run the CPU."""
         self.running = True
