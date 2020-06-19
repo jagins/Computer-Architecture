@@ -29,6 +29,7 @@ class CPU:
             0b01010110: self.JNE,
             0b01010100: self.JMP
         }
+        
         self.running = False
         self.stack_pointer = 7
         self.registers[self.stack_pointer] = int('0xf4', 16) #reg[7] = 244
@@ -177,15 +178,12 @@ class CPU:
         self.pc += 3
     
     def JEQ(self):
-        
         if self.flags['E'] == 1:
             self.JMP()
         else:
             self.pc += 2 
             
     def JNE(self):
-        jump_to_register = self.ram_read(self.pc + 1)
-        
         if self.flags['E'] == 0:
             self.JMP()
         else:
